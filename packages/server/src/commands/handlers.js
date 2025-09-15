@@ -1,20 +1,18 @@
-const store = require('../core/store');
-const aof = require('../core/aof');
-const emitter = require('../core/emitter');
+const store = require("../core/store");
+const aof = require("../core/aof");
+const emitter = require("../core/emitter");
 const {
   serializeSimpleString,
   serializeBulkString,
   serializeNull,
   serializeError,
   serializeInteger,
-  serializeArray
-} = require('../resp/serializer');
+  serializeArray,
+} = require("../resp/serializer");
 
-// This file no longer needs to know about the server or replica sockets.
+const WRITE_COMMANDS = new Set(["SET", "DEL", "EXPIRE", "FLUSHALL"]);
 
-const WRITE_COMMANDS = new Set(['SET', 'DEL', 'EXPIRE', 'FLUSHALL']);
-
-// The command handlers object (no changes needed inside)
+// The command handlers object maps command names to their respective functions.
 const commandHandlers = {
   PING: (args) => {
     return args.length === 0
@@ -94,25 +92,25 @@ const commandHandlers = {
 };
 
 function executeCommand(commandArray, fromMaster = false) {
-  emitter.emit('command');
+  emitter.emit("command");
   const commandName = commandArray[0].toUpperCase();
   const args = commandArray.slice(1);
-  
+
   const handler = commandHandlers[commandName];
   if (handler) {
     const response = handler(args);
 
     if (WRITE_COMMANDS.has(commandName) && !fromMaster) {
       const respCommand = serializeArray(commandArray);
-      
+
       // Instead of sending to sockets here, we emit an event.
       // The server will listen for this and handle the propagation.
-      emitter.emit('propagate', respCommand);
-      
+      emitter.emit("propagate", respCommand);
+
       aof.write(commandArray);
-      emitter.emit('write', { command: commandName, args });
+      emitter.emit("write", { command: commandName, args });
     }
-    
+
     return response;
   } else {
     return serializeError(`ERR unknown command '${commandName}'`);

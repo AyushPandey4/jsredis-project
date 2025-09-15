@@ -4,7 +4,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: Dockerfile # Uses the new Dockerfile in the root
+      dockerfile: Dockerfile # Uses the Dockerfile in the root
     container_name: jsredis-server
     restart: unless-stopped
     ports:

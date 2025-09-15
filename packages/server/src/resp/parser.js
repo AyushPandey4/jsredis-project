@@ -1,4 +1,4 @@
-const CRLF = '\r\n';
+const CRLF = "\r\n";
 const CRLF_BUFFER = Buffer.from(CRLF);
 
 class RESPParser {
@@ -26,26 +26,27 @@ class RESPParser {
     }
 
     const firstByte = this.buffer[0];
-    if (firstByte === 42) { // '*' for Array
+    if (firstByte === 42) {
+      // '*' for Array
       return this._parseArray();
     }
-    // Note: A full implementation would handle other types here too.
+    // We can extend this to handle other RESP types if needed.
     // For our Redis command server, we only expect arrays.
     return null;
   }
 
-  /**
-   * Parses a RESP Array from the current buffer.
-   */
+  //  Parses a RESP Array from the current buffer.
   _parseArray() {
     const crlfIndex = this.buffer.indexOf(CRLF_BUFFER);
-    if (crlfIndex === -1) return null; // <-- This was the line with the typo
+    if (crlfIndex === -1) return null;
 
-    const arrayLength = parseInt(this.buffer.slice(1, crlfIndex).toString(), 10);
-    if (isNaN(arrayLength)) throw new Error('Invalid array length');
+    const arrayLength = parseInt(
+      this.buffer.slice(1, crlfIndex).toString(),
+      10
+    );
+    if (isNaN(arrayLength)) throw new Error("Invalid array length");
 
     if (arrayLength < 0) {
-      // Handle null arrays if necessary, for now we treat as an error or empty
       return { value: null, consumed: crlfIndex + CRLF.length };
     }
 
@@ -57,10 +58,11 @@ class RESPParser {
         // Not enough data for the next element in the array
         return null;
       }
-      
+
       // We only expect Bulk Strings in our command arrays
-      if (this.buffer[offset] !== 36) { // '$'
-        throw new Error('Array elements must be Bulk Strings for commands');
+      if (this.buffer[offset] !== 36) {
+        // '$'
+        throw new Error("Array elements must be Bulk Strings for commands");
       }
 
       const result = this._parseBulkString(offset);
@@ -76,17 +78,16 @@ class RESPParser {
     return { value: elements, consumed: offset };
   }
 
-  /**
-   * Parses a RESP Bulk String from the buffer, starting at a given offset.
-   * @param {number} offset - The starting position in this.buffer to parse from.
-   */
+  //  Parses a RESP Bulk String from the buffer, starting at a given offset.
+  // @param {number} offset - The starting position in this.buffer to parse from.
+
   _parseBulkString(offset) {
     const crlfIndex = this.buffer.indexOf(CRLF_BUFFER, offset);
     if (crlfIndex === -1) return null;
 
     const lengthPrefix = this.buffer.slice(offset + 1, crlfIndex).toString();
     const stringLength = parseInt(lengthPrefix, 10);
-    if (isNaN(stringLength)) throw new Error('Invalid bulk string length');
+    if (isNaN(stringLength)) throw new Error("Invalid bulk string length");
 
     if (stringLength === -1) {
       // Null bulk string "$-1\r\n"
@@ -99,7 +100,9 @@ class RESPParser {
       return null;
     }
 
-    const value = this.buffer.slice(crlfIndex + CRLF.length, crlfIndex + CRLF.length + stringLength).toString();
+    const value = this.buffer
+      .slice(crlfIndex + CRLF.length, crlfIndex + CRLF.length + stringLength)
+      .toString();
     const consumed = endOfData - offset;
 
     return { value, consumed };

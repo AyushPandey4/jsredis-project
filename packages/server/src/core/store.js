@@ -58,7 +58,7 @@ class Store {
       `[Eviction] Memory limit reached. Evicting key: ${this.lruTail.key}`
     );
     const keyToEvict = this.lruTail.key;
-    this.del(keyToEvict); // del is updated to handle memory and LRU list
+    this.del(keyToEvict);
   }
 
   set(key, value) {
@@ -123,11 +123,7 @@ class Store {
     return 0;
   }
 
-  /**
-   * Sets a Time-To-Live (TTL) for a key.
-   * @param {string} key
-   * @param {number} ms - The TTL in milliseconds.
-   */
+  // Sets a Time-To-Live (TTL) for a key. The TTL in milliseconds.
   setExpiry(key, ms) {
     if (this.data.has(key)) {
       const expiryTime = Date.now() + ms;
@@ -137,9 +133,7 @@ class Store {
     return 0;
   }
 
-  /**
-   * Gets the remaining TTL for a key in seconds.
-   */
+  // Gets the remaining TTL for a key in seconds.
   getTtl(key) {
     if (!this.ttls.has(key)) {
       return -1; // No TTL set
@@ -155,9 +149,7 @@ class Store {
     return Math.ceil(remainingMs / 1000);
   }
 
-  /**
-   * Checks if a key is expired. Does not delete it.
-   */
+  // Checks if a key is expired. Does not delete it.
   isExpired(key) {
     if (!this.ttls.has(key)) {
       return false;
@@ -166,9 +158,7 @@ class Store {
     return Date.now() > expiryTime;
   }
 
-  /**
-   * Deletes all keys from the database.
-   */
+  // Deletes all keys from the database.
   flushAll() {
     this.data.clear();
     this.ttls.clear();
@@ -180,4 +170,4 @@ class Store {
 
 const storeInstance = new Store();
 module.exports = storeInstance;
-module.exports.Store = Store; // Also export the class on a named property
+module.exports.Store = Store; // Exporting the class for testing purposes

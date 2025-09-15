@@ -40,6 +40,5 @@ EXPOSE 63790
 EXPOSE 63791
 EXPOSE 8080
 
-# The final command to run the server.
 # The path is now simple and correct relative to the WORKDIR.
 CMD ["node", "src/index.js"]

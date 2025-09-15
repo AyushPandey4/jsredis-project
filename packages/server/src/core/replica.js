@@ -15,7 +15,7 @@ function connectToMaster(host, port) {
   });
 
   // The port we connect to is the master's MAIN port + 1
-  const replicationPort = port + 1; // <-- THIS IS THE KEY CHANGE
+  const replicationPort = port + 1;
 
   socket.connect(replicationPort, host, () => {
     console.log(
