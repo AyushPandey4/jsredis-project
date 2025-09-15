@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from "react";
 
 export function useWebSocket() {
   const [lastMessage, setLastMessage] = useState(null);
-  const [status, setStatus] = useState('disconnected');
+  const [status, setStatus] = useState("disconnected");
   const ws = useRef(null);
 
   const connect = useCallback((url) => {
@@ -10,17 +10,17 @@ export function useWebSocket() {
       return;
     }
 
-    setStatus('connecting');
+    setStatus("connecting");
     ws.current = new WebSocket(url);
 
-    ws.current.onopen = () => setStatus('connected');
-    
+    ws.current.onopen = () => setStatus("connected");
+
     // This onclose handler is the single source of truth for disconnection.
-    ws.current.onclose = () => setStatus('disconnected');
+    ws.current.onclose = () => setStatus("disconnected");
 
     ws.current.onerror = (err) => {
-      console.error('WebSocket Error:', err);
-      setStatus('error');
+      console.error("WebSocket Error:", err);
+      setStatus("error");
     };
     ws.current.onmessage = (event) => {
       try {
@@ -42,7 +42,7 @@ export function useWebSocket() {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(payload));
     } else {
-      console.error('Cannot send message, WebSocket is not connected.');
+      console.error("Cannot send message, WebSocket is not connected.");
     }
   }, []);
 

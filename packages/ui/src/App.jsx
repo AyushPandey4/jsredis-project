@@ -19,7 +19,6 @@ function App() {
   });
   const [metricsHistory, setMetricsHistory] = useState([]);
 
-  // Read the single URL from the environment variables
   const defaultUrl = import.meta.env.VITE_WS_URL;
 
   useEffect(() => {
@@ -74,40 +73,68 @@ function App() {
   };
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen flex flex-col font-mono">
-      {/* Pass the defaultUrl down as a prop */}
-      <ConnectionPanel
-        status={status}
-        onConnect={connect}
-        onDisconnect={disconnect}
-        defaultUrl={defaultUrl}
-      />
+    <div className="h-screen flex flex-col font-mono">
+      <header className="flex-shrink-0">
+        <ConnectionPanel
+          status={status}
+          onConnect={connect}
+          onDisconnect={disconnect}
+          defaultUrl={defaultUrl}
+        />
+      </header>
 
       {status === "connected" ? (
-        <main className="flex-grow flex p-4 gap-4 overflow-hidden">
-          <div className="w-2/3 flex flex-col">
-            <h2 className="text-lg font-semibold mb-2 text-gray-300">
-              Interactive Terminal
-            </h2>
-            <div className="flex-grow bg-[#1a1b26] p-2 rounded-md">
-              <Terminal
-                sendMessage={sendTerminalCommand}
-                lastMessage={terminalResponse}
-              />
+        <main className="flex-grow flex flex-col lg:flex-row p-4 gap-4 overflow-y-auto">
+          <div className="w-full lg:w-2/3 flex flex-col">
+            <div className="flex-grow flex flex-col bg-slate-800 border border-slate-700 rounded-lg shadow-lg overflow-hidden">
+              <h2 className="text-slate-400 text-sm font-semibold uppercase tracking-wider p-3 border-b border-slate-700 bg-slate-900/50">
+                Interactive Terminal
+              </h2>
+              <div className="flex-grow p-2">
+                <Terminal
+                  sendMessage={sendTerminalCommand}
+                  lastMessage={terminalResponse}
+                />
+              </div>
             </div>
           </div>
-          <div className="w-1/3 flex flex-col gap-4">
-            <div className="flex-grow bg-gray-800 rounded-md p-4 flex flex-col min-h-0">
+
+          <div className="w-full lg:w-1/3 flex flex-col gap-4">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg p-4 flex flex-col min-h-0 h-1/2">
               <KeyBrowser keys={keys} onKeyClick={handleKeyClick} />
             </div>
-            <div className="h-1/2 bg-gray-800 rounded-md p-4 flex flex-col">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg p-4 flex flex-col h-1/2">
               <MetricsPanel metrics={metrics} history={metricsHistory} />
             </div>
           </div>
         </main>
       ) : (
-        <div className="flex-grow flex items-center justify-center text-gray-500 text-xl">
-          <p>Please connect to a JSRedis server to begin.</p>
+        <div className="flex-grow flex flex-col items-center justify-center text-slate-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-16 w-16 mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11 11a1 1 0 112 0m-1 6a1 1 0 100-2 1 1 0 000 2z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21.883 12.036l.006.007a2.121 2.121 0 01-2.993 3.017l-4.578-4.578a2.121 2.121 0 010-2.993l4.578-4.578a2.121 2.121 0 113.006 2.993zM3.116 12.036l.007.007a2.121 2.121 0 002.993 3.017l4.578-4.578a2.121 2.121 0 000-2.993l-4.578-4.578a2.121 2.121 0 10-3.006 2.993z"
+            />
+          </svg>
+          <h2 className="text-2xl font-semibold text-slate-400">
+            Connection Required
+          </h2>
+          <p className="mt-1 text-slate-600">
+            Please use the panel above to connect to a JSRedis server.
+          </p>
         </div>
       )}
     </div>
