@@ -1,0 +1,14 @@
+# Ignore local dependencies, git history, and logs
+node_modules
+.git
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore test files and configs
+*.test.js
+jest.config.js

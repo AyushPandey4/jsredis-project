@@ -1,0 +1,38 @@
+
+services:
+  # The JSRedis Server Service
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile # Uses the new Dockerfile in the root
+    container_name: jsredis-server
+    restart: unless-stopped
+    ports:
+      # Expose all three ports to your local machine
+      - "63790:63790" # Main client port
+      - "63791:63791" # Replication port
+      - "8080:8080"   # WebSocket port for UI
+    environment:
+      # Set the ports via environment variables
+      - PORT=63790
+      - WS_PORT=8080
+    volumes:
+      # This creates a persistent volume for the AOF data
+      # Data will survive container restarts and removals
+      - jsredis-data:/app/data
+
+  # The React UI Service
+  ui:
+    build:
+      context: .
+      dockerfile: packages/ui/Dockerfile # Points to the UI's Dockerfile
+    container_name: jsredis-ui
+    restart: unless-stopped
+    ports:
+      - "3000:80" # Expose the UI on local port 3000
+    depends_on:
+      - server # Tells Docker to start the server before the UI
+
+# Defines the named volume for persistent data
+volumes:
+  jsredis-data:

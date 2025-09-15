@@ -1,0 +1,27 @@
+{
+  "name": "jsredis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev --workspace=@jsredis/server",
+    "dev:ui": "npm run dev --workspace=@jsredis/ui",
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:ui\"",
+   "benchmark": "node benchmarks/benchmark-final.js",
+    "start:replica": "cross-env PORT=6381 node packages/server/src/index.js --replicaof \"127.0.0.1 6380\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "autocannon": "^8.0.0",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0",
+    "hdr-histogram-js": "^3.0.1"
+  }
+}
