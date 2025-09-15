@@ -2,7 +2,7 @@
 
 This package contains the modern, responsive, and real-time user interface for the JSRedis server. It is a Single Page Application built with React and Vite, designed for high performance and a clean user experience.
 
-![JSRedis UI Screenshot](/public/ui-ss.png)
+![JSRedis UI Screenshot](/packages/ui/public/ui-ss.png)
 
 ## 🛠️ Tech Stack
 
