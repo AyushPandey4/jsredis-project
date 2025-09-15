@@ -2,7 +2,7 @@
 
 This package contains the modern, responsive, and real-time user interface for the JSRedis server. It is a Single Page Application built with React and Vite, designed for high performance and a clean user experience.
 
-![JSRedis UI Screenshot](../public/ui-ss.png)
+![JSRedis UI Screenshot](/public/ui-ss.png)
 
 ## 🛠️ Tech Stack
 
@@ -78,4 +78,6 @@ To run the UI in development mode and connect it to a locally running server:
 The UI is configured via environment variables. For local development, you can create a `.env.local` file in the `packages/ui` directory.
 
 **`packages/ui/.env.local`**
-`VITE_WS_URL=ws://localhost:8080`
+```sh
+VITE_WS_URL=ws://localhost:8080
+```
