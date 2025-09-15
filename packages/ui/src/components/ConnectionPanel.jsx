@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
-export function ConnectionPanel({ status, onConnect, onDisconnect,  defaultHost, defaultPort }) {
-  const [host, setHost] = useState(defaultHost || 'localhost');
-  const [port, setPort] = useState(defaultPort || '8080');
+// It now accepts a single `defaultUrl` prop
+export function ConnectionPanel({ status, onConnect, onDisconnect, defaultUrl }) {
+  // It now manages a single `url` state
+  const [url, setUrl] = useState(defaultUrl || 'ws://localhost:8080');
 
   const handleConnect = (e) => {
     e.preventDefault();
-    onConnect(`ws://${host}:${port}`);
+    onConnect(url); // Pass the full URL back up
   };
 
   const isConnected = status === 'connected';
@@ -16,26 +17,16 @@ export function ConnectionPanel({ status, onConnect, onDisconnect,  defaultHost,
     <div className="p-4 border-b border-gray-700">
       <h1 className="text-2xl font-bold text-green-400 mb-4">JSRedis Dashboard</h1>
       <form onSubmit={handleConnect} className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <label htmlFor="host">Host:</label>
+        <div className="flex items-center gap-2 flex-grow">
+          <label htmlFor="ws-url">Server URL:</label>
           <input
-            id="host"
+            id="ws-url"
             type="text"
-            value={host}
-            onChange={(e) => setHost(e.target.value)}
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
             disabled={isConnected || isConnecting}
-            className="bg-gray-800 border border-gray-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="port">Port:</label>
-          <input
-            id="port"
-            type="number"
-            value={port}
-            onChange={(e) => setPort(e.target.value)}
-            disabled={isConnected || isConnecting}
-            className="bg-gray-800 border border-gray-700 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+            className="bg-gray-800 border border-gray-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 w-full"
+            placeholder="ws://host:port"
           />
         </div>
 
@@ -43,7 +34,7 @@ export function ConnectionPanel({ status, onConnect, onDisconnect,  defaultHost,
           <button
             type="button"
             onClick={onDisconnect}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded font-semibold"
+            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded font-semibold flex-shrink-0"
           >
             Disconnect
           </button>
@@ -51,7 +42,7 @@ export function ConnectionPanel({ status, onConnect, onDisconnect,  defaultHost,
           <button
             type="submit"
             disabled={isConnecting}
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold disabled:opacity-50 disabled:cursor-wait"
+            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold disabled:opacity-50 disabled:cursor-wait flex-shrink-0"
           >
             {isConnecting ? 'Connecting...' : 'Connect'}
           </button>

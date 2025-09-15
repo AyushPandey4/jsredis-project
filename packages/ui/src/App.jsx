@@ -5,7 +5,7 @@ import { KeyBrowser } from "./components/KeyBrowser";
 import { ConnectionPanel } from "./components/ConnectionPanel";
 import { MetricsPanel } from "./components/MetricsPanel";
 
-const MAX_HISTORY_LENGTH = 30; // Keep 30 data points for the chart
+const MAX_HISTORY_LENGTH = 30;
 
 function App() {
   const { status, connect, disconnect, sendMessage, lastMessage } =
@@ -19,13 +19,11 @@ function App() {
   });
   const [metricsHistory, setMetricsHistory] = useState([]);
 
-  const defaultHost = import.meta.env.VITE_SERVER_HOST;
-  const defaultPort = import.meta.env.VITE_SERVER_PORT;
+  // Read the single URL from the environment variables
+  const defaultUrl = import.meta.env.VITE_WS_URL;
 
-  // Handles all incoming messages
   useEffect(() => {
     if (!lastMessage) return;
-
     if (lastMessage.type === "response") {
       setTerminalResponse(lastMessage.payload);
     } else if (lastMessage.type === "event") {
@@ -39,14 +37,12 @@ function App() {
         case "metrics-update":
           const newMetrics = lastMessage.payload;
           setMetrics(newMetrics);
-          // Add new data point to history for the chart
           setMetricsHistory((prev) => {
             const newPoint = {
               time: new Date(newMetrics.timestamp).toLocaleTimeString(),
               tps: parseFloat(newMetrics.tps),
               memory: parseFloat(newMetrics.memory.heapUsed),
             };
-            // Keep the history array from growing indefinitely
             return [...prev, newPoint].slice(-MAX_HISTORY_LENGTH);
           });
           break;
@@ -56,12 +52,10 @@ function App() {
     }
   }, [lastMessage, sendMessage]);
 
-  // Runs once on connection
   useEffect(() => {
     if (status === "connected") {
       sendMessage({ type: "subscribe", channel: "keyspace" });
     } else {
-      // Clear data when disconnected
       setKeys([]);
       setMetricsHistory([]);
       setMetrics({
@@ -75,19 +69,18 @@ function App() {
   const sendTerminalCommand = (commandString) => {
     sendMessage({ type: "command", payload: commandString });
   };
-
   const handleKeyClick = (key) => {
     sendTerminalCommand(`GET "${key}"`);
   };
 
   return (
     <div className="bg-gray-900 text-white min-h-screen flex flex-col font-mono">
+      {/* Pass the defaultUrl down as a prop */}
       <ConnectionPanel
         status={status}
         onConnect={connect}
         onDisconnect={disconnect}
-        defaultHost={defaultHost}
-        defaultPort={defaultPort}
+        defaultUrl={defaultUrl}
       />
 
       {status === "connected" ? (
