@@ -1,6 +1,7 @@
 # JSRedis - A High-Performance Redis Clone & Dashboard
 
-![JSRedis Showcase](/packages/ui/public/ui-ss.png)
+![JSRedis Showcase](/assests/pic1.png)
+![JSRedis Showcase](/assests/pic2.png)
 
 ### A fully-featured, Redis-compatible server built from scratch in Node.js, featuring advanced data structures, master-replica replication, and a real-time observability dashboard built with React.
 
